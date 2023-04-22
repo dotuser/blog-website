@@ -3,4 +3,9 @@
 <h1>Home</h1>
 <p> <%= homeStartingContent %> </p>
 
+<% blogs.forEach((blog) => { %>
+  <h2> <%= blog.title %> </h2>
+  <p> <%= blog.content %> </p>
+<% }); %>
+
 <%- include("partials/footer") -%>

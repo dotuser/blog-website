@@ -12,13 +12,18 @@ const contactContent =
 const app = express();
 const PORT = 3000;
 
+const posts = [];
+
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get('/', (req, res) => {
-  res.render('home', { homeStartingContent: homeStartingContent });
+  res.render('home', {
+    homeStartingContent: homeStartingContent,
+    blogs: posts
+  });
 });
 
 app.get('/about', (req, res) => {
@@ -38,9 +43,9 @@ app.post('/compose', (req, res) => {
     title: req.body.title,
     content: req.body.content
   }
-  console.log(`Title: ${post.title}, Post Data: ${post.content}`);
+  posts.push(post);
 
-  res.redirect('/compose');
+  res.redirect('/');
 });
 
 app.listen(PORT, () => {
