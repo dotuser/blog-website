@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const _ = require("lodash");
 
 const homeStartingContent =
   "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
@@ -19,33 +20,47 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get('/', (req, res) => {
-  res.render('home', {
+app.get("/", (req, res) => {
+  res.render("home", {
     homeStartingContent: homeStartingContent,
-    blogs: posts
+    blogs: posts,
   });
 });
 
-app.get('/about', (req, res) => {
-  res.render('about', { aboutContent: aboutContent });
+app.get("/about", (req, res) => {
+  res.render("about", { aboutContent: aboutContent });
 });
 
-app.get('/contact', (req, res) => {
-  res.render('contact', { contactContent: contactContent });
+app.get("/contact", (req, res) => {
+  res.render("contact", { contactContent: contactContent });
 });
 
-app.get('/compose', (req, res) => {
-  res.render('compose');
+app.get("/compose", (req, res) => {
+  res.render("compose");
 });
 
-app.post('/compose', (req, res) => {
+app.post("/compose", (req, res) => {
   const post = {
     title: req.body.title,
-    content: req.body.content
-  }
+    content: req.body.content,
+  };
   posts.push(post);
+  res.redirect("/");
+});
 
-  res.redirect('/');
+app.get("/posts/:postName", (req, res) => {
+  const requestedPost = _.lowerCase(req.params.postName);
+
+  posts.forEach((blog) => {
+    const blogTitle = _.lowerCase(blog.title);
+
+    if (blogTitle === requestedPost) {
+      res.render("post", {
+        title: blog.title,
+        content: blog.content,
+      });
+    }
+  });
 });
 
 app.listen(PORT, () => {
